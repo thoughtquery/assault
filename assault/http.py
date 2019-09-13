@@ -1,10 +1,18 @@
 import asyncio
 import time
 import os
+import requests
 
+
+## Requests is not really made to work with asyncio
 
 def fetch(url):
     """ Make the request and return the results """
+    ## Synchronous code
+    started_at = time.monotonic()
+    response = requests.get(url)
+    request_time = time.monotonic() - started_at 
+    return {"status code": response.status_code, "request time": request_time} 
     pass
 
 def worker(worker, queue, name):
