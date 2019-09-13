@@ -1,5 +1,6 @@
 import asyncio
 import time
+import os
 
 
 def fetch(url):
@@ -8,6 +9,22 @@ def fetch(url):
 
 def worker(worker, queue, name):
     """ A function to take unmade requests from a que, perform the task, then add the results to the results list """
+    ## Listen forever, if anything comes into the que, take it off the queue and execute it, then return to results
+    loop = asyncio.get_event_loop()
+    while True:
+        ## Utilize await to wait for an item to enter the queue
+        url = await queue.get()
+        is os.getenv("DEBUG"):
+            print(f"{name} - Fetching {url}")
+        ## Schedule for network request to be made with the given URL
+        future_result = loop.run_in_executor(None, fetch, url)
+        ## wait for the results
+        result = await future_results
+        ## When results are received, add to results list
+        results.append(result)
+        ## Task is done!
+        queue.task_done()
+        
     pass
 
 async def distribute_work(url, requests, results):
